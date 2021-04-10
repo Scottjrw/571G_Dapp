@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import Web3 from 'web3';
 import './App.css';
-import logo from '../logo.svg'
+import logo from '../logo.png'
 import CharityBazaar from '../abis/CharityBazaar'
 import Addressbar from './Addressbar'
-import Main from './Main'
+import Itemlist from './Itemlist'
 
 class App extends Component{
   
@@ -37,18 +37,18 @@ class App extends Component{
       const deployedCharityBazaar = new web3.eth.Contract(CharityBazaar.abi, networkData.address);
       this.setState({deployedCharityBazaar: deployedCharityBazaar});
       // get the number of total items on the blockchain; -1 because idCounter start from 1
-      // const totalNumber = await deployedCharityBazaar.methods.idCounter().call() -1 ;
-      // console.log(totalNumber);
-      // this.setState({totalNumber})
-      // // load items
-      // for (var i = 1;i<= totalNumber;i++) {
-      //   const item = await deployedCharityBazaar.methods.itemList(i).call();
-      //   this.setState({
-      //     items:[...this.state.items, item]
-      //   });
-      // }
-      // this.setState({loading: false})
-      // console.log(this.state.items)
+      const totalNumber = await deployedCharityBazaar.methods.idCounter().call() -1 ;
+      console.log(totalNumber);
+      this.setState({totalNumber})
+      // load items
+      for (var i = 1;i<= totalNumber;i++) {
+        const item = await deployedCharityBazaar.methods.itemList(i).call();
+        this.setState({
+          itemList:[...this.state.itemList, item]
+        });
+      }
+      this.setState({loading: false})
+      console.log(this.state.itemList)
     } else {
       window.alert('CharityBazaar contract is not found in your blockchain.')
     }
@@ -59,28 +59,35 @@ class App extends Component{
     this.state = {
         account: '', // account[0]
         totalNumber: 0, // total number of items
-        items: [], // items on sale
+        itemList: [], // items on sale
         loading: true
     };
 
-        // TODO: modify this
-        // this.bidItem = async (itemName, itemPrice) => {
-        //     this.setState ({loading: true})
-        //     const gasAmount = await this.state.deployedEthbay.methods.createItem(itemName, itemPrice).estimateGas({from: this.state.account})
-        //     this.state.deployedEthbay.methods.createItem(itemName, itemPrice).send({from: this.state.account, gas: gasAmount})
-        //     .once('receipt', async (receipt)=> {
-        //       const totalNumber = await this.state.deployedEthbay.methods.totalNumber().call();
-        //       this.setState({totalNumber});
-        //       this.setState({items: []});
-        //       for (var i = 1;i<= totalNumber;i++) {
-        //         const item = await this.state.deployedEthbay.methods.items(i).call();
-        //         this.setState({
-        //           items:[...this.state.items, item]
-        //         });
-        //       }
-        //       this.setState({loading: false});
-        //     })
-        // }
+    this.createItem = async (itemName, itemPrice) => {
+      this.setState ({loading: true})
+      const gasAmount = await this.state.deployedCharityBazaar.methods.createItem(itemName, itemPrice).estimateGas({from: this.state.account})
+      this.state.deployedCharityBazaar.methods.createItem(itemName, itemPrice).send({from: this.state.account, gas: gasAmount})
+      .once('receipt', async (receipt)=> {
+        const totalNumber = await this.state.deployedCharityBazaar.methods.idCounter().call()-1;
+        this.setState({totalNumber});
+        this.setState({itemList: []});
+        for (var i = 1;i<= totalNumber;i++) {
+          const item = await this.state.deployedCharityBazaar.methods.itemList(i).call();
+          this.setState({
+            itemList:[...this.state.itemList, item]
+          });
+        }
+        this.setState({loading: false});
+      })
+    }
+
+    this.bidItem = async (itemId, bidPrice) => {
+      this.setState ({loading: true})
+      this.state.deployedCharityBazaar.methods.bidItem(itemId, bidPrice).send({from: this.state.account, value: bidPrice})
+      .once('receipt', async (receipt)=> {
+        this.setState({loading: false});
+      })
+    }
   }
 
     render() {
@@ -90,7 +97,14 @@ class App extends Component{
           <div className="container-fluid mt-5">
             <div className="row">
               <main>
-                <img src={logo} className="App-logo" alt="logo" />
+                <img src={logo} alt="logo" />
+                { this.state.loading
+                  ? <div id="loader" className="text-center"><p className="text-center">Loading...</p></div>
+                  : <Itemlist 
+                  itemList={this.state.itemList}
+                  createItem={this.createItem}
+                  bidItem={this.bidItem}/>
+                } 
               </main>
             </div>
           </div>
