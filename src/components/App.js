@@ -6,6 +6,7 @@ import CharityBazaar from '../abis/CharityBazaar'
 import Addressbar from './Addressbar'
 import Itemlist from './Itemlist'
 import UserInfo from './UserInfo'
+import AdminContent from './AdminContent'
 
 class App extends Component{
   
@@ -39,7 +40,6 @@ class App extends Component{
       this.setState({deployedCharityBazaar: deployedCharityBazaar});
       // get the number of total items on the blockchain; -1 because idCounter start from 1
       const totalNumber = await deployedCharityBazaar.methods.idCounter().call() -1 ;
-      console.log(totalNumber);
       this.setState({totalNumber})
       // load items
       for (var i = 1;i<= totalNumber;i++) {
@@ -52,10 +52,18 @@ class App extends Component{
       const _order = await deployedCharityBazaar.methods.orderList(this.state.account).call();
       this.setState({order: _order});
       // load credit
+      await deployedCharityBazaar.methods.checkFirstUser(this.state.account).call();
       const _credit = await deployedCharityBazaar.methods.creditList(this.state.account).call();
       this.setState({credit: _credit});
+      // check owner
+      const _owner = await deployedCharityBazaar.methods._owner().call();
+      if(this.state.account===_owner){
+        this.setState({isOwner: true});
+      }else{
+        this.setState({isOwner: false});
+      }
+      console.log("current account is admin? " + this.state.isOwner);
       this.setState({loading: false});
-      console.log(this.state.credit);
     } else {
       window.alert('CharityBazaar contract is not found in your blockchain.')
     }
@@ -69,7 +77,8 @@ class App extends Component{
         itemList: [], // items on sale
         loading: true,
         order: null,
-        credit: null
+        credit: null,
+        isOwner: false
     };
 
     this.createItem = async (itemName, itemPrice) => {
@@ -121,6 +130,29 @@ class App extends Component{
         this.setState({loading: false});
       })
     }
+
+    this.confirm = async() =>{
+      this.setState({loading: true});
+      this.state.deployedCharityBazaar.methods.confirm().send({from: this.state.account})
+      .once('receipt', async(receipt)=>{
+        // update item list
+        const totalNumber = await this.state.deployedCharityBazaar.methods.idCounter().call()-1;
+        this.setState({totalNumber});
+        this.setState({itemList: []});
+        for (var i = 1;i<= totalNumber;i++) {
+          const item = await this.state.deployedCharityBazaar.methods.itemList(i).call();
+          this.setState({
+            itemList:[...this.state.itemList, item]
+          });
+        }
+        // update order status and credit count
+        const _order = await this.state.deployedCharityBazaar.methods.orderList(this.state.account).call();
+        this.setState({order: _order});
+        const _credit = await this.state.deployedCharityBazaar.methods.creditList(this.state.account).call();
+        this.setState({credit: _credit});
+        this.setState({loading: false});
+      })
+    }
   }
 
     render() {
@@ -132,11 +164,20 @@ class App extends Component{
               <main>
                 <img src={logo} alt="logo" />
                 { this.state.loading
+                  ? null
+                  : this.state.isOwner
+                    ?<AdminContent 
+                      itemList={this.state.itemList}
+                      createItem={this.createItem}
+                      confirm={this.confirm}/>
+                    :null
+                } 
+                { this.state.loading
                   ? <div id="loader" className="text-center"><p className="text-center">Loading...</p></div>
                   : <Itemlist 
-                  itemList={this.state.itemList}
-                  createItem={this.createItem}
-                  bidItem={this.bidItem}/>
+                    itemList={this.state.itemList}
+                    createItem={this.createItem}
+                    bidItem={this.bidItem}/>
                 } 
                 {
                   this.state.loading
