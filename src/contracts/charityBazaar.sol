@@ -31,6 +31,7 @@ contract CharityBazaar{
 
     // The Item that waiting for auction
     struct CharityItem{
+        uint itemId;
         string itemName;
         uint price;
         bool isItemSold;
@@ -70,9 +71,10 @@ contract CharityBazaar{
         require(bytes(_itemName).length != 0,"Please input the item name");
         require(_price > 0,"Please input a valid price");
         itemList[idCounter].itemName = _itemName;
-        itemList[idCounter].price = _price* (1 ether);
+        itemList[idCounter].price = _price;
         itemList[idCounter].isItemSold = false;
         itemList[idCounter].owner = _owner;
+        itemList[idCounter].itemId = idCounter;
         itemHighestPrice[idCounter] = _owner;
         idCounter += 1;
 
@@ -85,7 +87,7 @@ contract CharityBazaar{
 
 
 
-        uint givenPrice = _bidPrice * (1 ether);
+        uint givenPrice = _bidPrice;
         require(_itemID >0 && _itemID < idCounter,"Please input an valid item ID");
         require(givenPrice>= itemList[_itemID].price,"You should offer a price higher than the default price!");
         address payable addressUser = msg.sender;
@@ -115,7 +117,7 @@ contract CharityBazaar{
         address payable addressUser = msg.sender;
         require(orderList[addressUser].hasConfirmed == false,"The order has already confirmed");
         orderList[addressUser].isValidOrder = false;
-        uint refund = orderList[addressUser].price * (1 ether);
+        uint refund = orderList[addressUser].price;
         addressUser.transfer(refund);
 
         // Decrease 1 credit as punishment
@@ -147,7 +149,7 @@ contract CharityBazaar{
                         if (order.price >  itemUnderBid[itemID]){
                             // Refund the bidding to last highest user keeper
                             if (itemHighestPrice[itemID] != _owner){
-                                uint refund = orderList[itemHighestPrice[itemID]].price * (1 ether);
+                                uint refund = orderList[itemHighestPrice[itemID]].price;
                                 address payable addressRefund  = payable(address(itemHighestPrice[itemID]));
                                 addressRefund.transfer(refund);
                             }
@@ -156,7 +158,7 @@ contract CharityBazaar{
                         }
                         // If the price fails to bid, refund the ether to the corresponding buyer;
                         else {
-                            uint refund = order.price * (1 ether);
+                            uint refund = order.price;
                             address payable addressRefund  = payable(address(currentAddress));
                             addressRefund.transfer(refund);
                         }
@@ -183,7 +185,7 @@ contract CharityBazaar{
     }
 
     function donate(uint _donatePrice) public payable{
-        uint givenPrice = _donatePrice * (1 ether);
+        uint givenPrice = _donatePrice;
         require(givenPrice >= minimalDonateAmount,"Please donate at least 1 ether each time");
         address payable addressUser = msg.sender;
 
