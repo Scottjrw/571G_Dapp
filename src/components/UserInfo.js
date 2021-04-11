@@ -5,6 +5,25 @@ class UserInfo extends Component {
     render(){
         return(
             <div id="content">
+                {/* display credit */}
+                <h2>Your Credit: {this.props.credit.creditRest}</h2>
+                <p>make donation can earn you extra credit<br/>cancel order deducts your credit</p>
+                <form onSubmit={(event) => {
+                    event.preventDefault()
+                    const amount = window.web3.utils.toWei(this.donateValue.value.toString(), 'Ether')
+                    this.props.donate(amount)}}>
+                    <div>
+                        <input
+                            id="donateValue"
+                            type="text"
+                            ref={(input) => { this.donateValue = input }}
+                            className="form-control"
+                            placeholder="value to donate"
+                            required />
+                        <button type="submit" className="btn btn-primary">Donate</button>
+                    </div>
+                </form>
+
                 {/* display / cancel order */}
                 <h2>Your Order</h2>
                 <table className="table">

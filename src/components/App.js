@@ -51,8 +51,11 @@ class App extends Component{
       // load order
       const _order = await deployedCharityBazaar.methods.orderList(this.state.account).call();
       this.setState({order: _order});
+      // load credit
+      const _credit = await deployedCharityBazaar.methods.creditList(this.state.account).call();
+      this.setState({credit: _credit});
       this.setState({loading: false});
-      console.log(this.state.order);
+      console.log(this.state.credit);
     } else {
       window.alert('CharityBazaar contract is not found in your blockchain.')
     }
@@ -65,7 +68,8 @@ class App extends Component{
         totalNumber: 0, // total number of items
         itemList: [], // items on sale
         loading: true,
-        order: null
+        order: null,
+        credit: null
     };
 
     this.createItem = async (itemName, itemPrice) => {
@@ -102,6 +106,18 @@ class App extends Component{
       .once('receipt', async(receipt)=>{
         const _order = await this.state.deployedCharityBazaar.methods.orderList(this.state.account).call();
         this.setState({order: _order});
+        const _credit = await this.state.deployedCharityBazaar.methods.creditList(this.state.account).call();
+        this.setState({credit: _credit});
+        this.setState({loading: false});
+      })
+    }
+
+    this.donate = async(donateValue) =>{
+      this.setState({loading: true});
+      this.state.deployedCharityBazaar.methods.donate(donateValue).send({from: this.state.account, value:donateValue})
+      .once('receipt', async(receipt)=>{
+        const _credit = await this.state.deployedCharityBazaar.methods.creditList(this.state.account).call();
+        this.setState({credit: _credit});
         this.setState({loading: false});
       })
     }
@@ -127,6 +143,8 @@ class App extends Component{
                   ? null
                   : <UserInfo
                     order={this.state.order}
+                    credit={this.state.credit}
+                    donate={this.donate}
                     cancelOrder={this.cancelOrder}
                     />
                 }
