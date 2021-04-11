@@ -95,6 +95,16 @@ class App extends Component{
         this.setState({loading: false});
       })
     }
+
+    this.cancelOrder = async() => {
+      this.setState({loading: true});
+      this.state.deployedCharityBazaar.methods.cancelOrder().send({from: this.state.account})
+      .once('receipt', async(receipt)=>{
+        const _order = await this.state.deployedCharityBazaar.methods.orderList(this.state.account).call();
+        this.setState({order: _order});
+        this.setState({loading: false});
+      })
+    }
   }
 
     render() {
@@ -117,6 +127,7 @@ class App extends Component{
                   ? null
                   : <UserInfo
                     order={this.state.order}
+                    cancelOrder={this.cancelOrder}
                     />
                 }
               </main>

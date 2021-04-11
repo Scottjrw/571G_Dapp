@@ -19,10 +19,19 @@ class UserInfo extends Component {
                     <tr>
                     <td>{this.props.order.itemID}</td>
                     <td>{window.web3.utils.fromWei(this.props.order.price.toString(), 'ether')} ETH </td>
-                    <td>{this.props.order.hasConfirmed?"confirmed":"pending"}</td>
+                    <td id="orderStatus">{this.props.order.hasConfirmed?"confirmed"
+                        :this.props.order.isValidOrder?"pending":"canceled"}</td>
                     </tr>
                 </tbody>
                 </table>
+                <button 
+                    onClick={async (event)=>{
+                        if(this.props.order.isValidOrder && !this.props.order.hasConfirmed){
+                            await this.props.cancelOrder();
+                        }else{
+                            alert("order already confirmed or canceled");
+                        }
+                    }}>Cancel Order</button>
             </div>
 
         );
