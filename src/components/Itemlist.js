@@ -41,17 +41,17 @@ class Itemlist extends Component {
         <h1>Bid item</h1>
         <form onSubmit={(event) => {
           event.preventDefault()
-          const name = this.itemNameBid.value
+          const id = this.itemIdBid.value
           const price = window.web3.utils.toWei(this.itemPriceBid.value.toString(), 'Ether')
-          this.props.bidItem(name, price)
+          this.props.bidItem(id, price)
         }}>
           <div className="form-group mr-sm-2">
             <input
-              id="itemNameBid"
+              id="itemIdBid"
               type="text"
-              ref={(input) => { this.itemNameBid = input }}
+              ref={(input) => { this.itemIdBid = input }}
               className="form-control"
-              placeholder="Item Name to bid"
+              placeholder="Item ID to bid"
               required />
           </div>
           <div className="form-group mr-sm-2">
@@ -71,6 +71,7 @@ class Itemlist extends Component {
         <table className="table">
         <thead id="itemList">
           <tr>
+            <th scope="col">ID</th>
             <th scope="col">Name</th>
             <th scope="col">Price</th>
             <th scope="col">Owner</th>
@@ -81,8 +82,9 @@ class Itemlist extends Component {
             {this.props.itemList.map((item, key)=>{
                 return(
                     <tr key={key}>
-                    <th scope="row">{item.itemName.toString()}</th>   
-                    <td>{window.web3.utils.fromWei(item.price.toString(), 'wei')} ETH </td>
+                    <th scope="row">{item.itemId}</th>   
+                    <td>{item.itemName.toString()}</td>
+                    <td>{window.web3.utils.fromWei(item.price.toString(), 'ether')} ETH </td>
                     <td>{item.owner}</td>
                     <td>
                       {

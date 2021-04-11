@@ -5,6 +5,7 @@ import logo from '../logo.png'
 import CharityBazaar from '../abis/CharityBazaar'
 import Addressbar from './Addressbar'
 import Itemlist from './Itemlist'
+import UserInfo from './UserInfo'
 
 class App extends Component{
   
@@ -47,8 +48,11 @@ class App extends Component{
           itemList:[...this.state.itemList, item]
         });
       }
-      this.setState({loading: false})
-      console.log(this.state.itemList)
+      // load order
+      const _order = await deployedCharityBazaar.methods.orderList(this.state.account).call();
+      this.setState({order: _order});
+      this.setState({loading: false});
+      console.log(this.state.order);
     } else {
       window.alert('CharityBazaar contract is not found in your blockchain.')
     }
@@ -60,7 +64,8 @@ class App extends Component{
         account: '', // account[0]
         totalNumber: 0, // total number of items
         itemList: [], // items on sale
-        loading: true
+        loading: true,
+        order: null
     };
 
     this.createItem = async (itemName, itemPrice) => {
@@ -85,6 +90,8 @@ class App extends Component{
       this.setState ({loading: true})
       this.state.deployedCharityBazaar.methods.bidItem(itemId, bidPrice).send({from: this.state.account, value: bidPrice})
       .once('receipt', async (receipt)=> {
+        const _order = await this.state.deployedCharityBazaar.methods.orderList(this.state.account).call();
+        this.setState({order: _order});
         this.setState({loading: false});
       })
     }
@@ -105,6 +112,13 @@ class App extends Component{
                   createItem={this.createItem}
                   bidItem={this.bidItem}/>
                 } 
+                {
+                  this.state.loading
+                  ? null
+                  : <UserInfo
+                    order={this.state.order}
+                    />
+                }
               </main>
             </div>
           </div>
