@@ -33,17 +33,15 @@ class AdminContent extends Component {
                     placeholder="item Price"
                     required />
                 </div>
-                <Button type="submit" className="btn btn-primary">Add Item</Button>
-                </form>
-
-                {/* confirm order */}
+                <Button type="submit" id="add-item-btn">Add Item</Button>
+                {/* confirm orders */}
                 <Button 
                     variant="success"
+                    id="confirm-orders-btn"
                     onClick={async (event)=>{
                         await this.props.confirm();
                     }}>Confirm Orders</Button>
-
-                <hr id="admin-seperate"/>
+                </form>
             </div>
 
         );

@@ -1,5 +1,5 @@
-#admin-seperate {
-    width:50%;
-    margin: auto;
-    margin-bottom: 30px;
+#add-item-btn, #confirm-orders-btn {
+    display: inline-block;
+    margin-inline: 10px;
+    margin-bottom: 20px;
 }
