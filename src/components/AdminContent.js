@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import './AdminContent.css';
+import Button from 'react-bootstrap/Button'
 
 class AdminContent extends Component {
 
@@ -31,14 +33,17 @@ class AdminContent extends Component {
                     placeholder="item Price"
                     required />
                 </div>
-                <button type="submit" className="btn btn-primary">Add Item</button>
+                <Button type="submit" className="btn btn-primary">Add Item</Button>
                 </form>
 
                 {/* confirm order */}
-                <button 
+                <Button 
+                    variant="success"
                     onClick={async (event)=>{
                         await this.props.confirm();
-                    }}>Confirm Order</button>
+                    }}>Confirm Orders</Button>
+
+                <hr id="admin-seperate"/>
             </div>
 
         );

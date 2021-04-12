@@ -157,12 +157,12 @@ class App extends Component{
 
     render() {
       return (
-        <div>
-          <Addressbar account={this.state.account}/>
+        <div id="content-main">
           <div className="container-fluid mt-5">
+            <Addressbar account={this.state.account}/>
             <div className="row">
               <main>
-                <img src={logo} alt="logo" />
+                <img src={logo} alt="logo" id="logo"/>
                 { this.state.loading
                   ? null
                   : this.state.isOwner

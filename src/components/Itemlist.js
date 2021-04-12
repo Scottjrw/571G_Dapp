@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import './itemList.css';
+import Table from 'react-bootstrap/Table';
+import Button from 'react-bootstrap/Button';
 
 class Itemlist extends Component {
     handleBid = function(itemName){
@@ -7,70 +10,72 @@ class Itemlist extends Component {
   
     render() {
     return (
-      <div id="content">
+      <div id="content-itemList">
         {/* bid item */}
-        <h1>Bid item</h1>
-        <form onSubmit={(event) => {
-          event.preventDefault()
-          const id = this.itemIdBid.value
-          const price = window.web3.utils.toWei(this.itemPriceBid.value.toString(), 'Ether')
-          this.props.bidItem(id, price)
-        }}>
-          <div className="form-group mr-sm-2">
-            <input
-              id="itemIdBid"
-              type="text"
-              ref={(input) => { this.itemIdBid = input }}
-              className="form-control"
-              placeholder="Item ID to bid"
-              required />
-          </div>
-          <div className="form-group mr-sm-2">
-            <input
-              id="itemPriceBid"
-              type="text"
-              ref={(input) => { this.itemPriceBid = input }}
-              className="form-control"
-              placeholder="item Price to bid"
-              required />
-          </div>
-          <button type="submit" className="btn btn-primary">Bid!</button>
-        </form>
+        <div id="itemList-bid">
+          <h1>Bid item</h1>
+          <form onSubmit={(event) => {
+            event.preventDefault()
+            const id = this.itemIdBid.value
+            const price = window.web3.utils.toWei(this.itemPriceBid.value.toString(), 'Ether')
+            this.props.bidItem(id, price)
+          }}>
+            <div>
+              <input class="bid-input"
+                id="itemIdBid"
+                type="text"
+                ref={(input) => { this.itemIdBid = input }}
+                placeholder="Item ID to bid"
+                required />
+            </div>
+            <div>
+              <input class="bid-input"
+                id="itemPriceBid"
+                type="text"
+                ref={(input) => { this.itemPriceBid = input }}
+                placeholder="item Price to bid"
+                required />
+            </div>
+            <Button type="submit">Bid!</Button>
+          </form>
+        </div>
 
         {/* list of existing items */}
-        <h2>Item List</h2>
-        <table className="table">
-        <thead id="itemList">
-          <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Name</th>
-            <th scope="col">Price</th>
-            <th scope="col">Owner</th>
-            <th scope="col">Status</th>
-          </tr> 
-        </thead>
-        <tbody id="itemList">
-            {this.props.itemList.map((item, key)=>{
-                return(
-                    <tr key={key}>
-                    <th scope="row">{item.itemId}</th>   
-                    <td>{item.itemName.toString()}</td>
-                    <td>{window.web3.utils.fromWei(item.price.toString(), 'ether')} ETH </td>
-                    <td>{item.owner}</td>
-                    <td>
-                      {
-                        !item.isItemSold
-                        ?
-                        "Available"   
-                        : 
-                        "Sold"
-                        }
-                    </td>
-                  </tr>
-                )
-            })}
-        </tbody>
-        </table>
+        <div>
+          <h2>Item List</h2>
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Price</th>
+                <th scope="col">Owner</th>
+                <th scope="col">Status</th>
+              </tr> 
+            </thead>
+            <tbody>
+                {this.props.itemList.map((item, key)=>{
+                    return(
+                        <tr key={key}>
+                          <td>{item.itemId}</td>   
+                          <td>{item.itemName.toString()}</td>
+                          <td>{window.web3.utils.fromWei(item.price.toString(), 'ether')} ETH </td>
+                          <td>{item.owner}</td>
+                          <td>
+                            {
+                              !item.isItemSold
+                              ?
+                              "Available"   
+                              : 
+                              "Sold"
+                              }
+                          </td>
+                        </tr>
+                    )
+                })}
+            </tbody>
+          </Table>
+        </div>
       </div>
       
     );
