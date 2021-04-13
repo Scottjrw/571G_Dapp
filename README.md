@@ -1,70 +1,41 @@
-# Getting Started with Create React App
+# Charity_bazzar
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A charity bazzar Dapp built with Solidity and ReactJS.
 
-## Available Scripts
+## Requirements
 
-In the project directory, you can run:
+[ganache-cli](https://www.npmjs.com/package/ganache-cli) for making copy of local blockchain.
 
-### `npm start`
+[truffle](https://www.trufflesuite.com/) for Dapp related operations.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+[node v12.13.0](https://nodejs.org/en/blog/release/v12.13.0/) for js and npm support and **note: version matters!**
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Run the project
 
-### `npm test`
+`ganache-cli` to start local blockchain
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+`truffle migrate` to upload contracts to blockchain
 
-### `npm run build`
+`npm install` to install dependencies
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+`npm start` to run the project
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## What is does
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+In our charity bazzar, people bid and sell product for chairity purpose. The income from the trading is intented to donate for charity.
 
-### `npm run eject`
+### Auction flow
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+The buying and selling process in the bazaar is auction based. Each buyer needs to bid for their desired item, and admin will confirm the orders to finalized the orders. Only the buyer with highest bid can purchase the item. The transaction needs to be perform when making the bid, and the amount will be returned to the buyer if his proposal is not selected.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Credit system
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Buyers need to have at least 1 credit to place a bid. Each successful purchase (i.e. accepted bid) will reward the buyer one credit. Buyer can also make donation to the chairity to earn extra credit.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+When a buyer places a bid, and cancel the transaction before the auction result is finalized, 1 credit will be deducted from the user. 
 
-## Learn More
+Each new uesr will be given 3 credits when they join the bazaar first time. 
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Admin
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Bazaar admin is the people who deployed the contract. Only admin can upload items for auction, as well as confirming the orders to finalize the auction results. 
