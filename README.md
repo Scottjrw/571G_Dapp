@@ -1,6 +1,6 @@
 # Charity_bazzar
 
-A charity bazzar Dapp built with Solidity and ReactJS.
+A charity bazzar Dapp built with **Ethereum Solidity** and **ReactJS**.
 
 ## Requirements
 
